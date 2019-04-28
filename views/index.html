@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>mock数据服务</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <style>
+        .add-btn {
+            width: 100%;
+            margin-top: 6px;
+        }
+        .new-mockdata {
+            margin-top: 12px;
+        }
+        .h3 {
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+
+    <h3 class="h3">mock本地服务</h3>
+    <div id="app">
+        <!-- mock数据列表 -->
+        <el-table
+            :data="mockList"
+            style="width: 100%">
+            <el-table-column
+                prop="route"
+                label="路由"
+                width="180">
+            </el-table-column>
+            <el-table-column
+                prop="mockData"
+                label="数据">
+            </el-table-column>
+            <el-table-column
+                label="操作"
+                width="180"
+                fixed="right">
+                <template slot-scope="scope">
+                    <el-button type="primary" @click="emitMock(scope.$index)" size="small">编辑</el-button>
+                    <el-button type="danger" @click="deleteMock(scope.$index)" size="small">删除</el-button>
+                    </template>
+            </el-table-column>
+        </el-table>
+        <!-- 新增按钮 -->
+        <el-button plain="true"
+            icon="el-icon-plus"
+            class="add-btn"
+            @click="addMock"
+            >新增
+        </el-button>
+        <!-- 更新mock数据弹窗 -->
+        <el-dialog
+        title="设置mock信息"
+        :visible.sync="dialogVisible"
+        width="50%">
+            <el-input type="textarea"
+                :autosize="{ minRows: 2, maxRows: 15}"
+                v-model="editingData">
+            </el-input>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click.stop="dialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click.stop="editComfirm">确 定</el-button>
+            </span>
+        </el-dialog>
+
+        <!-- 新增mock数据弹窗 -->
+        <el-dialog
+        title="新增mock信息"
+        :visible.sync="newMock.isShow"
+        width="50%">
+            <el-input placeholder="请输入路由" v-model="newMock.route"></el-input>
+            <el-input class="new-mockdata"
+                placeholder="请输入正确的JSON格式内容" type="textarea"
+                :autosize="{ minRows: 10, maxRows: 15}"
+                v-model="newMock.mockData">
+            </el-input>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click.stop="dialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click.stop="addConfirm">确 定</el-button>
+            </span>
+        </el-dialog>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                editingData: '',
+                emitIndex: -1,
+                mockList: [],
+                dialogVisible: false,
+                newMock: {
+                    isShow: false,
+                    route: '',
+                    mockData: '',
+                },
+            },
+            created() {
+                axios.get('/data')
+                    .then(({data}) => {
+                        this.originData = data;
+                        this.mockList = this.formatData(data);
+                    });
+            },
+            methods: {
+                formatData(data) {
+                    return Object.keys(data).map((key) => ({
+                        route: key,
+                        mockData: JSON.stringify(data[key], null, 4), 
+                    }));
+                },
+                emitMock(index) {
+                    this.editingData = this.mockList[index].mockData;
+                    this.emitIndex = index;
+                    this.dialogVisible = true;
+                },
+                editComfirm() {
+                    let resultData;
+                    try {
+                        resultData = JSON.stringify(JSON.parse(this.editingData), null, 4);
+                    } catch (e) {
+                        this.$message.error('JSON格式不正确，请认真检查');
+                        return;
+                    }
+                    this.updateItem(Object.assign({
+                        route: this.mockList[this.emitIndex].route,
+                        mockData: JSON.parse(resultData),
+                    }))
+                        .then((res) => {
+                            this.mockList[this.emitIndex].mockData = resultData;
+                            this.emitIndex = -1;
+                            this.editingData = '';
+                            this.dialogVisible = false;
+                        });
+                    
+                },
+                deleteMock(index) {
+                    let route = this.mockList[index].route
+                    axios.post('/remove', {
+                        route,
+                    }).then((res) =>{
+                        this.mockList = this.mockList.filter((item) => item.route !== route);
+                    });
+                },
+                updateItem(data) {
+                    return axios.post('/update', {
+                        ...data,
+                    });
+                },
+                addMock() {
+                    this.newMock = {
+                        isShow: true,
+                        route: '',
+                        mockData: '',
+                    };
+                },
+                addConfirm() {
+                    const {
+                        route,
+                        mockData,
+                    } = this.newMock;
+                    if (!route || !mockData) {
+                        return this.$message.error('文本不能为空');
+                    }
+                    let mockDataParse;
+                    try {
+                        mockDataParse = JSON.parse(mockData);
+                    } catch (e) {
+                        this.$message.error('json格式错误，请认真检查');
+                    }
+                    axios.post('/add_item', {
+                        route,
+                        mockData: mockDataParse,
+                    }).then((res) => {
+                        this.mockList.push({
+                            route,
+                            mockData,
+                        });
+                        this.newMock = {
+                            isShow: false,
+                            route: '',
+                            mockData: '',
+                        };
+                    });
+                }
+            }
+        })     
+    </script>
+</body>
+</html>
