@@ -9,7 +9,7 @@ router.get('/get/:key', async (ctx) => {
     ctx.body = findOne({
         route: key,
         method: 'GET',
-    });
+    }).data;
 });
 
 router.get('/post/:key', async (ctx) => {
@@ -17,7 +17,7 @@ router.get('/post/:key', async (ctx) => {
     ctx.body = findOne({
         route: key,
         method: 'POST',
-    });
+    }).data;
 });
 
 module.exports = router;
