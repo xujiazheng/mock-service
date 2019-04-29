@@ -218,6 +218,7 @@
                             route,
                             data,
                             method,
+                            url: [location.origin, '/', method.toLowerCase(), '/', route].join(''),
                         });
                         this.newMock = {
                             isShow: false,

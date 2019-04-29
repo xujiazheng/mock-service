@@ -17,8 +17,9 @@ render(app, {
 
 app.use(cors({
     origin: (ctx) => {
-        return '*';
+        return ctx.header.origin;
     },
+    credentials: true,
 }));
 app.use(bodyParser());
 app.use(require('./router/router').routes());
