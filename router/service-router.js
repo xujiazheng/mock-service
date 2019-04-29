@@ -1,16 +1,34 @@
 const {
-    dataHandle
+    find,
+    insert,
+    update,
+    remove,
 } = require('../utils');
 const Router = require('koa-router');
 const router = new Router();
 
 router.get('/data', async (ctx) => {
-    ctx.body = dataHandle.get();
+    ctx.body = find();
 });
 
 router.post('/add_item', async (ctx) => {
     const body = ctx.request.body;
-   dataHandle.addItem(body.route, body.mockData);
+    const {
+        route,
+        data,
+        method
+    } = body;
+    if (!route || !data || !method) {
+        return ctx.body = {
+            success: false,
+            message: '参数错误',
+        };
+    }
+    insert({
+        route,
+        data,
+        method,
+    });
    ctx.body = {
        success: true,
    };
@@ -18,7 +36,19 @@ router.post('/add_item', async (ctx) => {
 
 router.post('/update', async (ctx) => {
     const body = ctx.request.body;
-    dataHandle.update(body.route, body.mockData);
+    if (!body.route || !body.data) {
+        return ctx.body = {
+            success: false,
+            message: '参数错误',
+        };
+    }
+    let filter = {
+        route: body.route,
+    };
+    let updateOptions = {
+        data: body.data,
+    };
+    update(filter, updateOptions);
     ctx.body = {
         success: true,
     };
@@ -26,7 +56,10 @@ router.post('/update', async (ctx) => {
 
 router.post('/remove', async (ctx) => {
     const body = ctx.request.body;
-    dataHandle.remove(body.route);
+    remove({
+        route: body.route,
+        method: body.method.toUpperCase(),
+    });
     ctx.body = {
         success: true,
     };

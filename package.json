@@ -4,18 +4,21 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node_modules/.bin/ava test/*.js",
+    "test:coverage": "node_modules/.bin/nyc npm run test",
     "start": "node server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "ava": "^1.4.1",
     "koa": "^2.7.0",
     "koa-bodyparser": "^4.2.1",
     "koa-cors": "^0.0.16",
     "koa-ejs": "^4.2.0",
     "koa-router": "^7.4.0",
+    "nyc": "^14.0.0",
     "opn": "^6.0.0"
   },
   "repository": {
