@@ -80,7 +80,7 @@
                 v-model="newMock.mockData">
             </el-input>
             <span slot="footer" class="dialog-footer">
-                <el-button @click.stop="dialogVisible = false">取 消</el-button>
+                <el-button @click.stop="newMock.isShow = false">取 消</el-button>
                 <el-button type="primary" @click.stop="addConfirm">确 定</el-button>
             </span>
         </el-dialog>
