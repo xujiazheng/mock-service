@@ -174,11 +174,12 @@
                     
                 },
                 deleteMock(index) {
-                    let route = this.mockList[index].route
+                    const mockItem = this.mockList[index];
                     axios.post('/remove', {
-                        route,
+                        route: mockItem.route,
+                        method: mockItem.method,
                     }).then((res) =>{
-                        this.mockList = this.mockList.filter((item) => item.route !== route);
+                        this.mockList = this.mockList.filter((item) => item.route !== mockItem.route);
                     });
                 },
                 updateItem(data) {
