@@ -5,7 +5,7 @@ import {
     insert,
     update,
     remove,
-} from '../utils';
+} from '../utils/db_u';
 
 test('remove all data success', (t) => {
     remove();

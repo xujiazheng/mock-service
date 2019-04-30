@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 /**
  * mockCache: [
  *  {
@@ -8,15 +9,16 @@ const fs = require('fs');
  *  }
  * ]
  */
-
+const DATA_FILE = '../cache.data';
+const DATA_PATH = path.join(__dirname, DATA_FILE);
 // 文件写入
 const fswrite = (data = '') => {
-    fs.writeFileSync('./cache.data', JSON.stringify(data, null, 4), 'utf8'); 
+    fs.writeFileSync(DATA_PATH, JSON.stringify(data, null, 4), 'utf8'); 
 };
 // 文件读取
 const fsread = () => {
     try {
-        return fs.readFileSync('./cache.data', 'utf8');
+        return fs.readFileSync(DATA_PATH, 'utf8');
     } catch (e) {
         fswrite();
         return '';

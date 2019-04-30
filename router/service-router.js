@@ -3,7 +3,7 @@ const {
     insert,
     update,
     remove,
-} = require('../utils');
+} = require('../utils/db_u');
 const Router = require('koa-router');
 const router = new Router();
 
