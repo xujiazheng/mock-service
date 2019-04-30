@@ -55,12 +55,12 @@ import axios from 'axios';
 // 请求list路由的mock数据
 axios.get('http://localhost:10000/get/list')
     .then((resp) => {
-        // resp为你设置的mock数据
+        // resp.data为你设置的mock数据
     });
 // 请求list路由的mock数据，并规定1000ms后返回数据
 axios.get('http://localhost:10000/get/list/timeout/1000')
     .then((resp) => {
-        // resp为你设置的mock数据
+        // resp.data为你设置的mock数据
     });
 ```
 
@@ -73,12 +73,12 @@ import axios from 'axios';
 // 请求add路由的接口并返回结果
 axios.post('http://localhost:10000/post/add')
     .then((resp) => {
-        // resp为你设置的mock数据
+        // resp.data为你设置的mock数据
     });
 // 请求add路由的接口，并规定1000ms后返回结果
 axios.post('http://localhost:10000/post/add/timeout/1000')
     .then((resp) => {
-        // resp为你设置的mock数据
+        // resp.data为你设置的mock数据
     });
 ```
 
