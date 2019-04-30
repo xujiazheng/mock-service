@@ -24,6 +24,8 @@ git clone https://github.com/xujiazheng/mock-service.git
 cd mock-service
 npm i
 npm start
+# 或者设置端口
+npm start -p 8080
 ```
 
 ## 开始
@@ -34,7 +36,7 @@ npm start
 2. 填写路由名称如"list"
 3. 填写需要返回的mock数据，数据为json格式。
 4. 点击确定保存mock接口信息
-5. mock数据的接口为http://localhost:10000/get/路由名称， 如“http://localhost:10000/get/list”
+5. mock数据的接口为http://localhost/路由名称， 如“http://localhost/list”
 
 ### 使用场景
 
@@ -53,12 +55,12 @@ npm start
 ```javascript
 import axios from 'axios';
 // 请求list路由的mock数据
-axios.get('http://localhost:10000/get/list')
+axios.get('http://localhost/list')
     .then((resp) => {
         // resp.data为你设置的mock数据
     });
 // 请求list路由的mock数据，并规定1000ms后返回数据
-axios.get('http://localhost:10000/get/list/timeout/1000')
+axios.get('http://localhost/list/timeout/1000')
     .then((resp) => {
         // resp.data为你设置的mock数据
     });
@@ -71,12 +73,12 @@ axios.get('http://localhost:10000/get/list/timeout/1000')
 ```javascript
 import axios from 'axios';
 // 请求add路由的接口并返回结果
-axios.post('http://localhost:10000/post/add')
+axios.post('http://localhost/add')
     .then((resp) => {
         // resp.data为你设置的mock数据
     });
 // 请求add路由的接口，并规定1000ms后返回结果
-axios.post('http://localhost:10000/post/add/timeout/1000')
+axios.post('http://localhost/add/timeout/1000')
     .then((resp) => {
         // resp.data为你设置的mock数据
     });
