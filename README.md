@@ -84,6 +84,6 @@ axios.post('http://localhost:10000/post/add/timeout/1000')
 
 ### 联系我们
 
-作者：xujiazheng
-QQ：1131029395
-issue: [https://github.com/xujiazheng/mock-service/issues](https://github.com/xujiazheng/mock-service/issues)
++ 作者：xujiazheng
++ QQ：1131029395
++ issue: [https://github.com/xujiazheng/mock-service/issues](https://github.com/xujiazheng/mock-service/issues)
