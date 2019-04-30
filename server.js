@@ -5,7 +5,15 @@ const path = require('path');
 const render = require('koa-ejs');
 const opn = require('opn');
 const app = new Koa();
-const port = 10000;
+const serviceRouterFilter = require('./filter/serviceRouterFilter');
+
+port = 80;
+let npmCofigArgv = process.env.npm_config_argv;
+if (npmCofigArgv) {
+    let argv = JSON.parse(npmCofigArgv).original;
+    argv = argv.slice(1);
+    port = argv[1] || 80;
+}
 
 render(app, {
     root: path.join(__dirname, 'views'),
@@ -14,6 +22,8 @@ render(app, {
     cache: false,
     debug: false,
 });
+
+app.use(serviceRouterFilter);
 
 app.use(cors({
     origin: (ctx) => {
@@ -34,4 +44,3 @@ app.listen(port, () => {
     console.log(`${port}端口正在监听... `);
     opn(`http://localhost:${port}/`);
 });
-

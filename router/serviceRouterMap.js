@@ -4,14 +4,25 @@ const {
     update,
     remove,
 } = require('../utils/db_u');
-const Router = require('koa-router');
-const router = new Router();
+const fs = require('fs');
+const path = require('path');
 
-router.get('/data', async (ctx) => {
+const GETMAP = {};
+const POSTMAP = {};
+
+GETMAP['/favicon.ico'] = async (ctx) => {
+    await new Promise((resolve) => {
+        let result = fs.readFileSync(path.join(__dirname, '../favicon.ico'));
+        resolve(result);
+    });
+};
+GETMAP['/'] = async (ctx) => {
+    await ctx.render('index');
+};
+GETMAP['/mockservice_data'] = async (ctx) => {
     ctx.body = find();
-});
-
-router.post('/add_item', async (ctx) => {
+};
+POSTMAP['/mockservice_add_item'] = async (ctx) => {
     const body = ctx.request.body;
     const {
         route,
@@ -29,12 +40,11 @@ router.post('/add_item', async (ctx) => {
         data,
         method,
     });
-   ctx.body = {
+    ctx.body = {
        success: true,
-   };
-});
-
-router.post('/update', async (ctx) => {
+    };
+};
+POSTMAP['/mockservice_update'] = async (ctx) => {
     const body = ctx.request.body;
     if (!body.route || !body.data) {
         return ctx.body = {
@@ -52,9 +62,8 @@ router.post('/update', async (ctx) => {
     ctx.body = {
         success: true,
     };
-});
-
-router.post('/remove', async (ctx) => {
+};
+POSTMAP['/mockservice_remove'] = async (ctx) => {
     const body = ctx.request.body;
     remove({
         route: body.route,
@@ -63,6 +72,9 @@ router.post('/remove', async (ctx) => {
     ctx.body = {
         success: true,
     };
-});
+};
 
-module.exports = router;
+module.exports = {
+    GET: GETMAP,
+    POST: POSTMAP,
+};
