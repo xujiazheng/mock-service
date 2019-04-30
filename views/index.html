@@ -18,6 +18,9 @@
         .h3 {
             color: #666;
         }
+        .m12 {
+            margin: 12px 0;
+        }
     </style>
 </head>
 <body>
@@ -30,7 +33,7 @@
             <el-table-column
                 prop="method"
                 label="请求方法"
-                width="120">
+                width="100">
             </el-table-column>
             <el-table-column
                 prop="route"
@@ -46,6 +49,13 @@
                 label="请求接口">
                 <template slot-scope="scope">
                     <el-link target="_blank" :href="mockList[scope.$index].url" type="primary">{{mockList[scope.$index].url}}</el-link>
+                </template>
+            </el-table-column>
+            <el-table-column
+                width="120"
+                label="接口延迟(ms)">
+                <template slot-scope="scope">
+                    <span>{{mockList[scope.$index].timeout || '无'}}</span>
                 </template>
             </el-table-column>
             <el-table-column
@@ -70,6 +80,9 @@
         title="设置mock信息"
         :visible.sync="editMock.isShow"
         width="50%">
+            <el-input class="m12" type="input" placeholder="请输入延迟时间，单位ms" v-model="editMock.timeout">
+                <template slot="prepend">接口延迟时间(ms)</template>
+            </el-input>
             <el-input type="textarea"
                 :autosize="{ minRows: 10, maxRows: 15}"
                 v-model="editMock.data">
@@ -91,7 +104,12 @@
                 <el-radio border size="medium" v-model="newMock.method" label="POST">POST</el-radio>
             </el-row>
             
-            <el-input placeholder="请输入路由" v-model="newMock.route"></el-input>
+            <el-input placeholder="请输入路由" v-model="newMock.route">
+                <template slot="prepend">路由名称</template>
+            </el-input>
+            <el-input class="m12" placeholder="请输入延迟时间，单位ms" v-model="newMock.timeout">
+                <template slot="prepend">接口延迟时间(ms)</template>
+            </el-input>
             <el-input class="new-mockdata"
                 placeholder="请输入正确的JSON格式内容" type="textarea"
                 :autosize="{ minRows: 10, maxRows: 15}"
@@ -119,12 +137,14 @@
                     route: '',
                     data: '',
                     method: 'GET',
+                    timeout: '',
                 },
                 editMock: {
                     isShow: false,
                     data: '',
                     route: '',
                     index: -1,
+                    timeout: 0,
                 },
             },
             created() {
@@ -135,6 +155,34 @@
                     });
             },
             methods: {
+                initNewMock(otherOptions) {
+                    let initData = {
+                        isShow: false,
+                        route: '',
+                        data: '',
+                        method: 'GET',
+                        timeout: '',
+                    };
+                    this.newMock = Object.assign({}, initData, otherOptions);
+                },
+                initEditMock() {
+                    this.editMock = {
+                        isShow: false,
+                        data: '',
+                        route: '',
+                        timeout: '',
+                        index: -1,
+                    };
+                },
+                setEditMock(target, otherOptions) {
+                    let newEdit = {
+                        isShow: true,
+                        data: target.data,
+                        route: target.route,
+                        timeout: target.timeout,
+                    };
+                    this.editMock = Object.assign({}, newEdit, otherOptions);
+                },
                 formatData(list) {
                     return list.map((item) => {
                         item.data = JSON.stringify(item.data, null, 4);
@@ -144,12 +192,9 @@
                 },
                 emitMock(index) {
                     let item = this.mockList[index];
-                    this.editMock = {
-                        isShow: true,
-                        data: item.data,
-                        route: item.route,
+                    this.setEditMock(item, {
                         index,
-                    }
+                    });
                 },
                 editComfirm() {
                     let editMock = this.editMock;
@@ -163,15 +208,12 @@
                     this.updateItem(Object.assign({
                         route: editMock.route,
                         data: JSON.parse(resultData),
+                        timeout: editMock.timeout,
                     }))
                         .then((res) => {
                             this.mockList[editMock.index].data = resultData;
-                            this.editMock = {
-                                isShow: false,
-                                data: '',
-                                route: '',
-                                index: -1,
-                            };
+                            this.mockList[editMock.index].timeout = editMock.timeout;
+                            this.initEditMock();
                         });
                     
                 },
@@ -190,18 +232,16 @@
                     });
                 },
                 addMock() {
-                    this.newMock = {
+                    this.initNewMock({
                         isShow: true,
-                        route: '',
-                        data: '',
-                        method: 'GET',
-                    };
+                    });
                 },
                 addConfirm() {
                     const {
                         route,
                         data,
                         method,
+                        timeout,
                     } = this.newMock;
                     if (!route || !data) {
                         return this.$message.error('文本不能为空');
@@ -216,6 +256,7 @@
                         route,
                         data: mockDataParse,
                         method,
+                        timeout,
                     }).then((res) => {
                         this.mockList.push({
                             route,
@@ -223,12 +264,7 @@
                             method,
                             url: [location.origin, '/', route].join(''),
                         });
-                        this.newMock = {
-                            isShow: false,
-                            route: '',
-                            data: '',
-                            method: 'GET',
-                        };
+                        this.initNewMock();
                     });
                 }
             }

@@ -27,7 +27,8 @@ POSTMAP['/mockservice_add_item'] = async (ctx) => {
     const {
         route,
         data,
-        method
+        method,
+        timeout,
     } = body;
     if (!route || !data || !method) {
         return ctx.body = {
@@ -39,6 +40,7 @@ POSTMAP['/mockservice_add_item'] = async (ctx) => {
         route,
         data,
         method,
+        timeout,
     });
     ctx.body = {
        success: true,
@@ -57,6 +59,7 @@ POSTMAP['/mockservice_update'] = async (ctx) => {
     };
     let updateOptions = {
         data: body.data,
+        timeout: body.timeout,
     };
     update(filter, updateOptions);
     ctx.body = {

@@ -5,7 +5,7 @@ const path = require('path');
 const render = require('koa-ejs');
 const opn = require('opn');
 const app = new Koa();
-const serviceRouterFilter = require('./filter/serviceRouterFilter');
+const routerFilter = require('./router/routerFilter');
 
 port = 80;
 let npmCofigArgv = process.env.npm_config_argv;
@@ -22,8 +22,7 @@ render(app, {
     cache: false,
     debug: false,
 });
-
-app.use(serviceRouterFilter);
+app.use(bodyParser());
 
 app.use(cors({
     origin: (ctx) => {
@@ -31,8 +30,7 @@ app.use(cors({
     },
     credentials: true,
 }));
-app.use(bodyParser());
-app.use(require('./router/router').routes());
+app.use(routerFilter);
 // 异常处理
 process.on('uncaughtException', function (err) {
     //打印出错误

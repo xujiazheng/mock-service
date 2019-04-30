@@ -63,7 +63,7 @@ const findOne = (filter) => {
     return data[0];
 };
 // 插入数据
-const insert = ({method, route, data}) => {
+const insert = ({method, route, data, timeout}) => {
     if (!method || !route || !data) {
         throw new Error('insert need `method`、`route`、`data` arguments');
     }
@@ -83,6 +83,7 @@ const insert = ({method, route, data}) => {
         route,
         method,
         data,
+        timeout,
     };
     dbData.push(newItem);
     fswrite(dbData);
@@ -100,9 +101,7 @@ const update = (filter, options) => {
     data.forEach((item) => {
         if (isTrue(item, filter)) { 
             for (let key in options) {
-                if (key in item) {
-                    item[key] = options[key];
-                }
+                item[key] = options[key];
             }
         }
     });
