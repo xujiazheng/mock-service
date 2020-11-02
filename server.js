@@ -7,12 +7,12 @@ const opn = require('opn');
 const app = new Koa();
 const routerFilter = require('./router/routerFilter');
 
-port = 80;
+port = 3300;
 let npmCofigArgv = process.env.npm_config_argv;
 if (npmCofigArgv) {
     let argv = JSON.parse(npmCofigArgv).original;
     argv = argv.slice(1);
-    port = argv[1] || 80;
+    port = argv[1] || port;
 }
 
 render(app, {

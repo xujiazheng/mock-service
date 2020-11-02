@@ -6,7 +6,9 @@
   "scripts": {
     "test": "node_modules/.bin/ava test/*.js",
     "test:coverage": "node_modules/.bin/nyc npm run test",
-    "start": "node server.js"
+    "start": "node server.js",
+    "pm2": "pm2 start --name mock server.js --watch",
+    "pm2:stop": "pm2 stop mock"
   },
   "keywords": [],
   "author": "",
